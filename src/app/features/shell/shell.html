@@ -1,0 +1,48 @@
+<div class="flex h-screen flex-col overflow-hidden bg-slate-100 dark:bg-vscode-900" style="font-family: 'Lexend', sans-serif;">
+  <header class="flex h-10 shrink-0 cursor-move items-center justify-between bg-slate-200 px-4 dark:bg-vscode-700" style="-webkit-app-region: drag">
+    <div class="flex items-center gap-2">
+      <img src="logo.png" alt="My Task" class="h-5" />
+      <span class="text-xs font-semibold text-slate-500 dark:text-vscode-300">My Task</span>
+    </div>
+    <div class="flex items-center gap-1" style="-webkit-app-region: no-drag">
+      <button
+        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-300 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-50"
+        (click)="theme.toggle()"
+        [title]="theme.isDark() ? 'Switch to light' : 'Switch to dark'"
+      ><span class="text-[0.65rem] leading-none">{{ theme.isDark() ? '☀️' : '🌙' }}</span></button>
+      <button
+        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-300 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-50"
+        (click)="maximize()"
+        [title]="isMaximized() ? 'Restore' : 'Maximize'"
+      >
+        @if (isMaximized()) {
+          <!-- restore-down icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+          </svg>
+        } @else {
+          <!-- maximize icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        }
+      </button>
+      <button
+        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-red-500 hover:text-white dark:text-vscode-300 dark:hover:bg-red-600"
+        (click)="close()"
+        title="Close"
+      >✕</button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <app-sidebar [style.width.px]="sidebarWidth()" class="shrink-0" />
+    <div
+      class="z-10 w-1 cursor-col-resize bg-slate-200 transition-colors hover:bg-indigo-400 dark:bg-vscode-700 dark:hover:bg-vscode-accent-500"
+      (mousedown)="onResizeStart($event)"
+    ></div>
+    <main class="flex flex-1 flex-col overflow-y-auto p-6">
+      <app-project-board class="flex flex-1 flex-col" />
+    </main>
+  </div>
+</div>

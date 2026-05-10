@@ -1,0 +1,40 @@
+<div class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2.5 transition-shadow hover:shadow-sm dark:border-vscode-600 dark:bg-vscode-800">
+  <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+    <span
+      class="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-slate-800 dark:text-vscode-100"
+      [class.line-through]="task().status === 'completed' || task().status === 'cancelled'"
+      [class.text-slate-400]="task().status === 'completed'"
+      [class.text-slate-300]="task().status === 'cancelled'"
+      [class.opacity-70]="task().status === 'cancelled'"
+    >{{ task().title }}</span>
+    <span class="text-[0.72rem] text-slate-400 dark:text-vscode-400">{{ timestamp }}</span>
+  </div>
+  <div class="flex shrink-0 gap-1">
+    @if (task().status === 'current') {
+      <button
+        class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-none bg-green-100 text-xs text-green-600 transition-colors hover:bg-green-200 dark:bg-green-900/40 dark:text-green-400 dark:hover:bg-green-900/70"
+        (click)="onComplete()" title="Mark complete"
+      >✓</button>
+      <button
+        class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-none bg-red-100 text-xs text-red-600 transition-colors hover:bg-red-200 dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-900/70"
+        (click)="onCancel()" title="Cancel task"
+      >✕</button>
+    }
+    @if (task().status === 'completed' || task().status === 'cancelled') {
+      <button
+        class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-none bg-sky-100 text-xs text-sky-600 transition-colors hover:bg-sky-200 dark:bg-sky-900/40 dark:text-sky-400 dark:hover:bg-sky-900/70"
+        (click)="onRestore()" title="Restore to current"
+      >↩</button>
+    }
+    @if (task().status === 'completed' || task().status === 'cancelled') {
+      <button
+        class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-none bg-slate-50 text-[0.7rem] text-slate-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-vscode-700 dark:hover:bg-red-900/40 dark:hover:text-red-400"
+        (click)="onDelete()" title="Delete task"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
+    }
+  </div>
+</div>

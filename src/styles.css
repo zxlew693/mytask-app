@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "@fontsource/lexend";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark .mat-mdc-dialog-surface {
+  background-color: #2d2d2d !important;
+}
+
+@theme {
+  /* VS Code Dark+ color scale */
+  --color-vscode-50:  #f0f0f0;
+  --color-vscode-100: #d4d4d4;
+  --color-vscode-200: #a0a0a0;
+  --color-vscode-300: #858585;
+  --color-vscode-400: #6a6a6a;
+  --color-vscode-500: #555555;
+  --color-vscode-600: #454545;
+  --color-vscode-700: #3c3c3c;
+  --color-vscode-800: #2d2d2d;
+  --color-vscode-850: #252526;
+  --color-vscode-900: #1e1e1e;
+  --color-vscode-950: #141414;
+
+  /* VS Code accent (blue) */
+  --color-vscode-accent-50:  #e8f4fd;
+  --color-vscode-accent-100: #c0dcf7;
+  --color-vscode-accent-200: #90c2f0;
+  --color-vscode-accent-300: #5aa3e8;
+  --color-vscode-accent-400: #2b87dc;
+  --color-vscode-accent-500: #0078d4;
+  --color-vscode-accent-600: #006bbf;
+  --color-vscode-accent-700: #005ba3;
+  --color-vscode-accent-800: #004a85;
+  --color-vscode-accent-900: #003a68;
+}
