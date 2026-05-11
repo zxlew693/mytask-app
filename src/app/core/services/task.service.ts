@@ -23,6 +23,15 @@ export class TaskService {
     }
   }
 
+  async updateTitle(id: string, title: string): Promise<void> {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    const res = await this.api.tasks.updateTitle({ id, title: trimmed });
+    if (res.success && res.data) {
+      this._tasks.update(list => list.map(t => (t.id === id ? res.data! : t)));
+    }
+  }
+
   async updateStatus(id: string, status: TaskStatus): Promise<void> {
     const res = await this.api.tasks.updateStatus({ id, status });
     if (res.success && res.data) {

@@ -7,8 +7,10 @@ export const Channels = {
   TASK_GET_BY_PROJECT: 'task:getByProject',
   TASK_CREATE:         'task:create',
   TASK_UPDATE_STATUS:  'task:updateStatus',
+  TASK_UPDATE_TITLE:   'task:updateTitle',
   TASK_DELETE:         'task:delete',
   WINDOW_CLOSE:        'window:close',
+  WINDOW_MINIMIZE:     'window:minimize',
   WINDOW_MAXIMIZE:     'window:maximize',
   WINDOW_MAXIMIZE_CHANGED: 'window:maximizeChanged',
 } as const;

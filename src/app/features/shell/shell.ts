@@ -27,6 +27,10 @@ export class ShellComponent {
     window.electronAPI?.window.close();
   }
 
+  minimize(): void {
+    window.electronAPI?.window.minimize();
+  }
+
   maximize(): void {
     window.electronAPI?.window.maximize();
   }

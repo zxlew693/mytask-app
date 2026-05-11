@@ -1,6 +1,39 @@
 @import "tailwindcss";
 @import "@fontsource/lexend";
 
+/* Modern scrollbar — hidden until hover on the scrollable container */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s;
+}
+*:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+:where(.dark) *:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* Webkit (Chrome/Edge) */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+:where(.dark) *:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark .mat-mdc-dialog-surface {

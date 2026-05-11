@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import type { IpcEnvelope, Project, CreateProjectPayload, DeleteProjectPayload, RenameProjectPayload } from '../../../electron/ipc/project.types';
-import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, DeleteTaskPayload } from '../../../electron/ipc/task.types';
+import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, DeleteTaskPayload } from '../../../electron/ipc/task.types';
 
 export type { IpcEnvelope };
 
@@ -15,6 +15,7 @@ export interface ElectronApi {
     getAll(): Promise<IpcEnvelope<Task[]>>;
     create(payload: CreateTaskPayload): Promise<IpcEnvelope<Task>>;
     updateStatus(payload: UpdateTaskStatusPayload): Promise<IpcEnvelope<Task>>;
+    updateTitle(payload: UpdateTaskTitlePayload): Promise<IpcEnvelope<Task>>;
     delete(payload: DeleteTaskPayload): Promise<IpcEnvelope<void>>;
   };
 }

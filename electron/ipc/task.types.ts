@@ -24,6 +24,11 @@ export interface DeleteTaskPayload {
   id: string;
 }
 
+export interface UpdateTaskTitlePayload {
+  id: string;
+  title: string;
+}
+
 export interface GetTasksByProjectPayload {
   projectId: string;
 }

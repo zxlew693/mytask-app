@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { Channels } from './channels';
 import type { DbService } from '../store/db.service';
 import type { IpcEnvelope } from './project.types';
-import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, DeleteTaskPayload } from './task.types';
+import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, DeleteTaskPayload } from './task.types';
 
 export function registerTaskHandlers(db: DbService): void {
   ipcMain.handle(Channels.TASK_GET_ALL, (): IpcEnvelope<Task[]> => {
@@ -24,6 +24,14 @@ export function registerTaskHandlers(db: DbService): void {
   ipcMain.handle(Channels.TASK_UPDATE_STATUS, (_e, payload: UpdateTaskStatusPayload): IpcEnvelope<Task> => {
     try {
       return { success: true, data: db.updateTaskStatus(payload) };
+    } catch (e) {
+      return { success: false, error: String(e) };
+    }
+  });
+
+  ipcMain.handle(Channels.TASK_UPDATE_TITLE, (_e, payload: UpdateTaskTitlePayload): IpcEnvelope<Task> => {
+    try {
+      return { success: true, data: db.updateTaskTitle(payload) };
     } catch (e) {
       return { success: false, error: String(e) };
     }

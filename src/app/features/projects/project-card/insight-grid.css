@@ -1,14 +1,24 @@
 .cell-out { fill: transparent; }
-.cell-0   { fill: #e2e8f0; }
-.cell-1   { fill: var(--color-vscode-accent-200); }
-.cell-2   { fill: var(--color-vscode-accent-400); }
-.cell-3   { fill: var(--color-vscode-accent-600); }
+.cell-0   { fill: #e2e8f0; transition: fill 0.1s; cursor: default; }
+.cell-1   { fill: var(--color-vscode-accent-200); transition: fill 0.1s; cursor: default; }
+.cell-2   { fill: var(--color-vscode-accent-400); transition: fill 0.1s; cursor: default; }
+.cell-3   { fill: var(--color-vscode-accent-600); transition: fill 0.1s; cursor: default; }
+
+.cell-0:hover { fill: #cbd5e1; }
+.cell-1:hover { fill: var(--color-vscode-accent-300); }
+.cell-2:hover { fill: var(--color-vscode-accent-500); }
+.cell-3:hover { fill: var(--color-vscode-accent-700); }
 
 :where(.dark) .cell-out { fill: transparent; }
 :where(.dark) .cell-0   { fill: var(--color-vscode-700); }
 :where(.dark) .cell-1   { fill: var(--color-vscode-accent-300); }
 :where(.dark) .cell-2   { fill: var(--color-vscode-accent-500); }
 :where(.dark) .cell-3   { fill: var(--color-vscode-accent-700); }
+
+:where(.dark) .cell-0:hover { fill: var(--color-vscode-600); }
+:where(.dark) .cell-1:hover { fill: var(--color-vscode-accent-400); }
+:where(.dark) .cell-2:hover { fill: var(--color-vscode-accent-600); }
+:where(.dark) .cell-3:hover { fill: var(--color-vscode-accent-800); }
 
 .month-label {
   font-size: 9px;

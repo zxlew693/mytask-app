@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskService } from '../../../core/services/task.service';
 import { SoundService } from '../../../core/services/sound.service';
@@ -17,6 +17,10 @@ export class TaskItemComponent {
   private sound = inject(SoundService);
   private dialog = inject(MatDialog);
 
+  protected editing = signal(false);
+  protected editValue = signal('');
+  private editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
+
   protected get timestamp(): string {
     const t = this.task();
     if (t.status === 'completed' && t.completedAt)
@@ -31,6 +35,32 @@ export class TaskItemComponent {
       month: 'short', day: 'numeric',
       hour: '2-digit', minute: '2-digit',
     });
+  }
+
+  protected startEdit(): void {
+    this.editValue.set(this.task().title);
+    this.editing.set(true);
+    setTimeout(() => {
+      const el = this.editInput()?.nativeElement;
+      if (el) { el.focus(); el.select(); }
+    });
+  }
+
+  protected async commitEdit(): Promise<void> {
+    const newTitle = this.editValue().trim();
+    this.editing.set(false);
+    if (newTitle && newTitle !== this.task().title) {
+      await this.taskService.updateTitle(this.task().id, newTitle);
+    }
+  }
+
+  protected cancelEdit(): void {
+    this.editing.set(false);
+  }
+
+  protected onEditKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') { event.preventDefault(); this.commitEdit(); }
+    if (event.key === 'Escape') { event.preventDefault(); this.cancelEdit(); }
   }
 
   protected async onComplete(): Promise<void> {

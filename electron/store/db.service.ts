@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
 import type { Project, CreateProjectPayload } from '../ipc/project.types';
-import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, TaskStatus } from '../ipc/task.types';
+import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, TaskStatus } from '../ipc/task.types';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const initSqlJs = require('sql.js');
@@ -165,6 +165,21 @@ export class DbService {
     stmt.free();
     this.persist();
 
+    const row = this.queryOne<Record<string, unknown>>(
+      'SELECT id, title, projectId, status, createdAt, completedAt, cancelledAt FROM tasks WHERE id = ?',
+      [payload.id]
+    );
+    if (!row) throw new Error(`Task ${payload.id} not found`);
+    return this.rowToTask(row);
+  }
+
+  updateTaskTitle(payload: UpdateTaskTitlePayload): Task {
+    const trimmed = payload.title.trim();
+    if (!trimmed) throw new Error('Title cannot be empty');
+    const stmt = this.db.prepare('UPDATE tasks SET title = ? WHERE id = ?');
+    stmt.run([trimmed, payload.id]);
+    stmt.free();
+    this.persist();
     const row = this.queryOne<Record<string, unknown>>(
       'SELECT id, title, projectId, status, createdAt, completedAt, cancelledAt FROM tasks WHERE id = ?',
       [payload.id]

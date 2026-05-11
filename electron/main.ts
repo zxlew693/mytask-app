@@ -42,6 +42,10 @@ app.whenReady().then(async () => {
     BrowserWindow.getFocusedWindow()?.close();
   });
 
+  ipcMain.on(Channels.WINDOW_MINIMIZE, () => {
+    BrowserWindow.getFocusedWindow()?.minimize();
+  });
+
   ipcMain.on(Channels.WINDOW_MAXIMIZE, () => {
     const win = BrowserWindow.getFocusedWindow();
     if (!win) return;

@@ -4,6 +4,7 @@ import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, DeleteTaskPayloa
 interface ElectronAPI {
   window: {
     close(): void;
+    minimize(): void;
     maximize(): void;
     onMaximizeChange(cb: (isMaximized: boolean) => void): void;
   };

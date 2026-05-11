@@ -31,6 +31,15 @@
       ><span class="text-[0.65rem] leading-none">{{ theme.isDark() ? '☀️' : '🌙' }}</span></button>
       <button
         class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-300 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-50"
+        (click)="minimize()"
+        title="Minimize"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+        </svg>
+      </button>
+      <button
+        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-300 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-50"
         (click)="maximize()"
         [title]="isMaximized() ? 'Restore' : 'Maximize'"
       >
@@ -55,7 +64,7 @@
   </header>
 
   <div class="flex flex-1 overflow-hidden">
-    <app-sidebar [style.width.px]="sidebarWidth()" class="shrink-0" />
+    <app-sidebar [style.width.px]="sidebarWidth()" class="shrink-0 h-full" />
     <div
       class="z-10 w-1 cursor-col-resize bg-slate-200 transition-colors hover:bg-indigo-400 dark:bg-vscode-700 dark:hover:bg-vscode-accent-500"
       (mousedown)="onResizeStart($event)"

@@ -158,6 +158,20 @@ MyTask follows a clean separation between the **renderer process** (Angular) and
 
 ---
 
+## 🗄 Data Storage
+
+MyTask stores all data locally in a SQLite database file:
+
+| Platform | Location |
+|---|---|
+| Windows | `C:\Users\<username>\AppData\Roaming\my-task\mytask.db` |
+| macOS | `~/Library/Application Support/my-task/mytask.db` |
+| Linux | `~/.config/my-task/mytask.db` |
+
+You can open `mytask.db` with any SQLite viewer (e.g. [DB Browser for SQLite](https://sqlitebrowser.org/)) to inspect or back up your data directly.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome and appreciated! Here's how to get involved:

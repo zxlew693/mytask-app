@@ -111,7 +111,7 @@
     @if (activeTab() === 'current') {
       <div class="flex gap-2 px-4 pt-3">
         <input
-          class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-indigo-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder:text-vscode-400 dark:focus:border-vscode-accent-500"
+          class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-vscode-accent-500 focus:ring-1 focus:ring-vscode-accent-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder:text-vscode-400 dark:focus:border-vscode-accent-500 dark:focus:ring-vscode-accent-500"
           [value]="newTaskTitle()"
           (input)="onTitleChange($event)"
           (keydown)="onKeydown($event)"

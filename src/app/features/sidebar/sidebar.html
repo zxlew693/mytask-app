@@ -1,4 +1,4 @@
-<div class="flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-700 dark:bg-vscode-850 dark:text-vscode-100">
+<div class="flex h-full flex-col overflow-hidden bg-slate-100 text-slate-700 dark:bg-vscode-850 dark:text-vscode-100">
   <div class="flex items-center justify-between border-b border-slate-200 px-4 pb-3 pt-5 dark:border-vscode-600">
     <div class="flex items-center gap-2">
       <span class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-vscode-300">Projects</span>
@@ -30,6 +30,24 @@
     </div>
   </div>
 
+  @if (showInput()) {
+    <div class="flex gap-1.5 border-b border-slate-200 px-3 py-2.5 dark:border-vscode-600">
+      <input
+        class="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-100 dark:placeholder:text-vscode-400 dark:focus:border-vscode-accent-500"
+        [value]="newName()"
+        (input)="onInputChange($event)"
+        (keydown)="onKeydown($event)"
+        placeholder="Project name…"
+        spellcheck="false"
+        autofocus
+      />
+      <button
+        class="shrink-0 cursor-pointer rounded-md bg-vscode-accent-500 px-2.5 py-1.5 text-xs text-white transition-colors hover:bg-vscode-accent-600"
+        (click)="onAdd()"
+      >Add</button>
+    </div>
+  }
+
   <div class="border-b border-slate-200 px-3 py-2 dark:border-vscode-600">
     <div class="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 dark:border-vscode-600 dark:bg-vscode-800">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-vscode-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -55,26 +73,8 @@
     </div>
   </div>
 
-  @if (showInput()) {
-    <div class="flex gap-1.5 border-b border-slate-200 px-3 py-2.5 dark:border-vscode-600">
-      <input
-        class="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-500 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-100 dark:placeholder:text-vscode-400 dark:focus:border-vscode-accent-500"
-        [value]="newName()"
-        (input)="onInputChange($event)"
-        (keydown)="onKeydown($event)"
-        placeholder="Project name…"
-        spellcheck="false"
-        autofocus
-      />
-      <button
-        class="shrink-0 cursor-pointer rounded-md bg-vscode-accent-500 px-2.5 py-1.5 text-xs text-white transition-colors hover:bg-vscode-accent-600"
-        (click)="onAdd()"
-      >Add</button>
-    </div>
-  }
-
   <ul
-    class="flex flex-1 flex-col overflow-y-auto py-2"
+    class="flex flex-1 flex-col overflow-y-auto py-2 [scrollbar-gutter:stable]"
     (dragleave)="onDragLeave($event)"
     (dragover)="$event.preventDefault()"
     (drop)="onDrop($event, projectService.projects().length)"
