@@ -5,8 +5,8 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    name: 'TodoApp',
-    executableName: 'todo-app',
+    name: 'My Task',
+    executableName: 'mytask',
     ignore: [
       /^\/src/,
       /^\/electron\/(?!.*\.js$)/,
@@ -20,9 +20,9 @@ const config: ForgeConfig = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'TodoApp',
+        name: 'My Task',
         authors: 'StazLab',
-        description: 'A desktop todo application to record task by project.',
+        description: 'A desktop application to record task by project.',
       },
     },
     {

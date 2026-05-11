@@ -92,7 +92,7 @@ npm run build
 ```
 
 Output:
-- `dist/todo-app/browser/` — Angular renderer bundle
+- `dist/mytask-app/browser/` — Angular renderer bundle
 - `dist-electron/` — Compiled Electron main process
 
 ### Package (unpacked executable)
