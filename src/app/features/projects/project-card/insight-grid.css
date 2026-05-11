@@ -1,0 +1,30 @@
+.cell-out { fill: transparent; }
+.cell-0   { fill: #e2e8f0; }
+.cell-1   { fill: var(--color-vscode-accent-200); }
+.cell-2   { fill: var(--color-vscode-accent-400); }
+.cell-3   { fill: var(--color-vscode-accent-600); }
+
+:where(.dark) .cell-out { fill: transparent; }
+:where(.dark) .cell-0   { fill: var(--color-vscode-700); }
+:where(.dark) .cell-1   { fill: var(--color-vscode-accent-300); }
+:where(.dark) .cell-2   { fill: var(--color-vscode-accent-500); }
+:where(.dark) .cell-3   { fill: var(--color-vscode-accent-700); }
+
+.month-label {
+  font-size: 9px;
+  fill: #94a3b8;
+  font-family: inherit;
+  text-anchor: start;
+}
+
+.dow-label {
+  font-size: 9px;
+  fill: #94a3b8;
+  font-family: inherit;
+  text-anchor: end;
+}
+
+:where(.dark) .month-label,
+:where(.dark) .dow-label {
+  fill: var(--color-vscode-300);
+}

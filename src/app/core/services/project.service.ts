@@ -22,6 +22,10 @@ export class ProjectService {
     });
   }
 
+  openAll(): void {
+    this._openedIds.update(() => new Set(this._projects().map(p => p.id)));
+  }
+
   isOpen(id: string): boolean {
     return this._openedIds().has(id);
   }

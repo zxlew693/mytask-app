@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ProjectService } from '../../core/services/project.service';
+import { SoundService } from '../../core/services/sound.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,10 +10,18 @@ import { ProjectService } from '../../core/services/project.service';
 })
 export class SidebarComponent {
   protected projectService = inject(ProjectService);
+  private sound = inject(SoundService);
   protected showInput = signal(false);
   protected newName = signal('');
+  protected searchQuery = signal('');
   protected editingId = signal<string | null>(null);
   protected editingName = signal('');
+
+  protected filteredProjects = computed(() => {
+    const q = this.searchQuery().trim().toLowerCase();
+    if (!q) return this.projectService.projects();
+    return this.projectService.projects().filter(p => p.name.toLowerCase().includes(q));
+  });
 
   // null = no drag; number = insert-before index (items.length = append at end)
   protected dropIndex = signal<number | null>(null);
@@ -25,6 +34,7 @@ export class SidebarComponent {
   protected async onAdd(): Promise<void> {
     const name = this.newName().trim();
     if (!name) return;
+    this.sound.play('decision');
     await this.projectService.create(name);
     this.newName.set('');
     this.showInput.set(false);
@@ -39,8 +49,19 @@ export class SidebarComponent {
   }
 
   protected onSelect(id: string): void {
+    this.sound.play('select');
     this.projectService.select(id);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  protected onToggleOpen(id: string): void {
+    this.sound.play(this.projectService.isOpen(id) ? 'close' : 'open');
+    this.projectService.toggleOpen(id);
+  }
+
+  protected onOpenAll(): void {
+    this.sound.play('open');
+    this.projectService.openAll();
   }
 
   protected onEditStart(event: MouseEvent, project: { id: string; name: string }): void {
@@ -56,6 +77,7 @@ export class SidebarComponent {
   protected async onEditCommit(): Promise<void> {
     const id = this.editingId();
     if (!id) return;
+    this.sound.play('decision');
     await this.projectService.rename(id, this.editingName());
     this.editingId.set(null);
   }

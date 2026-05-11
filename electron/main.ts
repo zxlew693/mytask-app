@@ -23,7 +23,7 @@ function createWindow(): void {
   });
 
   if (isDev) {
-    win.loadURL('http://localhost:4200');
+    win.loadURL('http://localhost:8888');
     win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(__dirname, '../dist/todo-app/browser/index.html'));

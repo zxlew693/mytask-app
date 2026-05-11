@@ -7,7 +7,7 @@
     "start:ng": "ng serve --port 8888",
     "build:electron": "tsc -p electron/tsconfig.json",
     "start:electron": "cross-env NODE_ENV=development electron dist-electron/main.js",
-    "electron:wait": "wait-on http://localhost:4200 && npm run build:electron && npm run start:electron",
+    "electron:wait": "wait-on http://localhost:8888 && npm run build:electron && npm run start:electron",
     "dev": "concurrently --kill-others \"npm run start:ng\" \"npm run electron:wait\"",
     "build": "ng build --configuration production && npm run build:electron",
     "package": "npm run build && electron-forge package",

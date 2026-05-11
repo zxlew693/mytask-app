@@ -2,8 +2,7 @@
   <div class="flex min-w-0 flex-1 flex-col gap-0.5">
     <span
       class="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-slate-800 dark:text-vscode-100"
-      [class.line-through]="task().status === 'completed' || task().status === 'cancelled'"
-      [class.text-slate-400]="task().status === 'completed'"
+[class.text-slate-400]="task().status === 'completed'"
       [class.text-slate-300]="task().status === 'cancelled'"
       [class.opacity-70]="task().status === 'cancelled'"
     >{{ task().title }}</span>

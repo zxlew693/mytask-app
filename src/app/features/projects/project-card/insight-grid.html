@@ -1,0 +1,32 @@
+<svg
+  [attr.width]="svgWidth()"
+  [attr.height]="svgHeight()"
+  [attr.viewBox]="'0 0 ' + svgWidth() + ' ' + svgHeight()"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Month labels -->
+  @for (m of monthLabels(); track m.x) {
+    <text [attr.x]="m.x" [attr.y]="TOP_OFFSET - 5" class="month-label">{{ m.label }}</text>
+  }
+
+  <!-- Day-of-week labels (all 7, Mon–Sun) -->
+  @for (dow of DOW_LABELS; track $index) {
+    <text
+      [attr.x]="LEFT_OFFSET - 4"
+      [attr.y]="TOP_OFFSET + $index * STEP + CELL - 1"
+      class="dow-label"
+    >{{ dow }}</text>
+  }
+
+  <!-- Grid cells -->
+  @for (cell of cells(); track cell.date) {
+    <rect
+      [attr.x]="cell.x"
+      [attr.y]="cell.y"
+      [attr.width]="CELL"
+      [attr.height]="CELL"
+      [attr.rx]="2"
+      [class]="cell.colorClass"
+    ><title>{{ cell.label }}</title></rect>
+  }
+</svg>

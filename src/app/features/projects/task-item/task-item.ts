@@ -1,5 +1,8 @@
 import { Component, inject, input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { TaskService } from '../../../core/services/task.service';
+import { SoundService } from '../../../core/services/sound.service';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
 import type { Task } from '../../../core/models/task.model';
 
 @Component({
@@ -11,6 +14,8 @@ import type { Task } from '../../../core/models/task.model';
 export class TaskItemComponent {
   readonly task = input.required<Task>();
   private taskService = inject(TaskService);
+  private sound = inject(SoundService);
+  private dialog = inject(MatDialog);
 
   protected get timestamp(): string {
     const t = this.task();
@@ -29,18 +34,34 @@ export class TaskItemComponent {
   }
 
   protected async onComplete(): Promise<void> {
+    this.sound.play('decision');
     await this.taskService.updateStatus(this.task().id, 'completed');
   }
 
   protected async onCancel(): Promise<void> {
+    this.sound.play('cancel');
     await this.taskService.updateStatus(this.task().id, 'cancelled');
   }
 
   protected async onRestore(): Promise<void> {
+    this.sound.play('restore');
     await this.taskService.updateStatus(this.task().id, 'current');
   }
 
-  protected async onDelete(): Promise<void> {
-    await this.taskService.delete(this.task().id);
+  protected onDelete(): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete task',
+        message: `"${this.task().title}" will be permanently deleted.`,
+      },
+      width: '360px',
+      autoFocus: false,
+      hasBackdrop: true,
+      disableClose: false,
+    });
+    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      await this.taskService.delete(this.task().id);
+    });
   }
 }

@@ -4,19 +4,55 @@
       <span class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-vscode-300">Projects</span>
       <span class="rounded-full bg-slate-200 px-1.5 py-px text-[0.65rem] font-medium text-slate-500 dark:bg-vscode-700 dark:text-vscode-300">{{ projectService.projects().length }}</span>
     </div>
-    @if (showInput()) {
+    <div class="flex items-center gap-1">
       <button
-        class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-md bg-slate-200 text-lg leading-none text-slate-500 transition-colors hover:bg-red-100 hover:text-red-500 dark:bg-vscode-700 dark:text-vscode-300 dark:hover:bg-red-900/30 dark:hover:text-red-400"
-        (click)="showInput.set(false); newName.set('')"
-        title="Cancel"
-      >−</button>
-    } @else {
-      <button
-        class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-md bg-slate-200 text-lg leading-none text-slate-500 transition-colors hover:bg-slate-300 hover:text-slate-700 dark:bg-vscode-700 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-100"
-        (click)="showInput.set(true)"
-        title="New project"
-      >+</button>
-    }
+        class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-md bg-slate-200 text-slate-500 transition-colors hover:bg-slate-300 hover:text-slate-700 dark:bg-vscode-700 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-100"
+        (click)="onOpenAll()"
+        title="Open all projects"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      @if (showInput()) {
+        <button
+          class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-md bg-slate-200 text-lg leading-none text-slate-500 transition-colors hover:bg-red-100 hover:text-red-500 dark:bg-vscode-700 dark:text-vscode-300 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+          (click)="showInput.set(false); newName.set('')"
+          title="Cancel"
+        >−</button>
+      } @else {
+        <button
+          class="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-md bg-slate-200 text-lg leading-none text-slate-500 transition-colors hover:bg-slate-300 hover:text-slate-700 dark:bg-vscode-700 dark:text-vscode-300 dark:hover:bg-vscode-600 dark:hover:text-vscode-100"
+          (click)="showInput.set(true)"
+          title="New project"
+        >+</button>
+      }
+    </div>
+  </div>
+
+  <div class="border-b border-slate-200 px-3 py-2 dark:border-vscode-600">
+    <div class="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 dark:border-vscode-600 dark:bg-vscode-800">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-vscode-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+      </svg>
+      <input
+        class="min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-vscode-100 dark:placeholder:text-vscode-400"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        placeholder="Search projects…"
+        spellcheck="false"
+      />
+      @if (searchQuery()) {
+        <button
+          class="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded text-slate-400 hover:text-slate-600 dark:text-vscode-400 dark:hover:text-vscode-200"
+          (click)="searchQuery.set('')"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      }
+    </div>
   </div>
 
   @if (showInput()) {
@@ -43,12 +79,12 @@
     (dragover)="$event.preventDefault()"
     (drop)="onDrop($event, projectService.projects().length)"
   >
-    @for (project of projectService.projects(); track project.id; let i = $index) {
+    @for (project of filteredProjects(); track project.id; let i = $index) {
       @if (dropIndex() === i) {
         <li class="mx-3 my-px h-0.5 rounded-full bg-vscode-accent-500" aria-hidden="true"></li>
       }
       <li
-        class="flex cursor-pointer items-center gap-1.5 border-l-[3px] py-2.5 pl-2 pr-4 text-sm text-slate-600 transition-colors hover:bg-slate-200 dark:text-vscode-200 dark:hover:bg-vscode-800"
+        class="flex cursor-pointer items-center gap-1.5 border-l-[3px] py-2.5 pl-2 pr-4 text-sm text-slate-600 transition-colors dark:text-vscode-200"
         [class.border-vscode-accent-500]="projectService.selectedProjectId() === project.id"
         [class.bg-slate-200]="projectService.selectedProjectId() === project.id"
         [class.dark:bg-vscode-700]="projectService.selectedProjectId() === project.id"
@@ -56,6 +92,8 @@
         [class.dark:text-vscode-50]="projectService.selectedProjectId() === project.id"
         [class.font-medium]="projectService.selectedProjectId() === project.id"
         [class.border-transparent]="projectService.selectedProjectId() !== project.id"
+        [class.hover:bg-slate-100]="projectService.selectedProjectId() !== project.id"
+        [class.dark:hover:bg-vscode-600]="projectService.selectedProjectId() !== project.id"
         [class.opacity-40]="isDragging(i)"
         (dragover)="onDragOver($event, i)"
         (drop)="onDrop($event, i)"
@@ -89,13 +127,13 @@
           />
         } @else {
           <span
-            class="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
+            class="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap select-none"
             (dblclick)="onEditStart($event, project)"
           >{{ project.name }}</span>
           @if (!projectService.isOpen(project.id)) {
             <button
               class="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded text-slate-400 transition-colors hover:bg-indigo-100 hover:text-indigo-500 dark:text-vscode-400 dark:hover:bg-vscode-accent-500/20 dark:hover:text-vscode-accent-300"
-              (click)="$event.stopPropagation(); projectService.toggleOpen(project.id)"
+              (click)="$event.stopPropagation(); onToggleOpen(project.id)"
               title="Open panel"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -106,10 +144,12 @@
         }
       </li>
     } @empty {
-      <li class="px-4 py-4 text-center text-xs text-slate-400 dark:text-vscode-400">No projects yet</li>
+      <li class="px-4 py-4 text-center text-xs text-slate-400 dark:text-vscode-400">
+        {{ searchQuery() ? 'No matching projects' : 'No projects yet' }}
+      </li>
     }
 
-    @if (dropIndex() === projectService.projects().length) {
+    @if (dropIndex() === filteredProjects().length) {
       <li class="mx-3 my-px h-0.5 rounded-full bg-vscode-accent-500" aria-hidden="true"></li>
     }
   </ul>

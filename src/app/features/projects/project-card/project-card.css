@@ -1,0 +1,9 @@
+.legend-0 { fill: #e2e8f0; }
+.legend-1 { fill: var(--color-vscode-accent-200); }
+.legend-2 { fill: var(--color-vscode-accent-400); }
+.legend-3 { fill: var(--color-vscode-accent-600); }
+
+:where(.dark) .legend-0 { fill: var(--color-vscode-600); }
+:where(.dark) .legend-1 { fill: var(--color-vscode-accent-300); }
+:where(.dark) .legend-2 { fill: var(--color-vscode-accent-500); }
+:where(.dark) .legend-3 { fill: var(--color-vscode-accent-700); }

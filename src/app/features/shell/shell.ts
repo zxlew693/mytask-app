@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { SidebarComponent } from '../sidebar/sidebar';
 import { ProjectBoardComponent } from '../projects/project-board/project-board';
 import { ThemeService } from '../../core/services/theme.service';
+import { SoundService } from '../../core/services/sound.service';
 
 const MIN_WIDTH = 160;
 const MAX_WIDTH = 400;
@@ -14,6 +15,7 @@ const MAX_WIDTH = 400;
 })
 export class ShellComponent {
   theme = inject(ThemeService);
+  sound = inject(SoundService);
   sidebarWidth = signal(240);
   isMaximized = signal(false);
 

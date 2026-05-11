@@ -77,7 +77,7 @@ npm install
 npm run dev
 ```
 
-This starts the Angular dev server on `http://localhost:4200` and launches Electron once the server is ready. DevTools open automatically.
+This starts the Angular dev server on `http://localhost:8888` and launches Electron once the server is ready. DevTools open automatically.
 
 ---
 

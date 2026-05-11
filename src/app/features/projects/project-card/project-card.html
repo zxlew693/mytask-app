@@ -25,7 +25,7 @@
       <!-- close panel -->
       <button
         class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-100"
-        (click)="projectService.toggleOpen(project().id)"
+        (click)="onClosePanel()"
         title="Close panel"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -97,6 +97,15 @@
           [class.dark:text-vscode-300]="activeTab() !== 'cancelled'"
         >{{ cancelledTasks().length }}</span>
       </button>
+      <button
+        class="flex cursor-pointer items-center gap-1.5 border-b-2 border-transparent bg-transparent px-[18px] py-2.5 text-sm text-slate-500 transition-colors hover:text-slate-800 dark:text-vscode-300 dark:hover:text-vscode-100"
+        [class.border-vscode-accent-500]="activeTab() === 'insight'"
+        [class.text-vscode-accent-400]="activeTab() === 'insight'"
+        [class.font-medium]="activeTab() === 'insight'"
+        (click)="activeTab.set('insight')"
+      >
+        Insight
+      </button>
     </div>
 
     @if (activeTab() === 'current') {
@@ -115,12 +124,74 @@
       </div>
     }
 
-    <div class="flex min-h-12 flex-col gap-1.5 px-4 py-3">
-      @for (task of visibleTasks(); track task.id) {
-        <app-task-item [task]="task" />
-      } @empty {
-        <p class="py-4 text-center text-sm text-slate-400 dark:text-vscode-400">No {{ activeTab() }} tasks</p>
-      }
-    </div>
+    @if (activeTab() !== 'insight') {
+      <div class="flex min-h-12 flex-col gap-1.5 px-4 py-3">
+        @for (task of visibleTasks(); track task.id) {
+          <app-task-item [task]="task" />
+        } @empty {
+          <p class="py-4 text-center text-sm text-slate-400 dark:text-vscode-400">No {{ activeTab() }} tasks</p>
+        }
+      </div>
+    }
+
+    @if (activeTab() === 'insight') {
+      <div class="px-4 py-3">
+        <div class="mb-3 flex items-center justify-between">
+          <div class="flex gap-1">
+            @for (mode of insightModes; track mode.value) {
+              <button
+                class="cursor-pointer rounded-md border px-3 py-1 text-xs transition-colors"
+                [class.border-vscode-accent-500]="insightMode() === mode.value"
+                [class.bg-vscode-accent-500]="insightMode() === mode.value"
+                [class.text-white]="insightMode() === mode.value"
+                [class.border-slate-200]="insightMode() !== mode.value"
+                [class.text-slate-500]="insightMode() !== mode.value"
+                [class.dark:border-vscode-600]="insightMode() !== mode.value"
+                [class.dark:text-vscode-300]="insightMode() !== mode.value"
+                (click)="insightMode.set(mode.value)"
+              >{{ mode.label }}</button>
+            }
+          </div>
+          <div class="flex items-center gap-1">
+            <button
+              class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-100"
+              [disabled]="insightYears().indexOf(insightYear()) >= insightYears().length - 1"
+              [class.opacity-30]="insightYears().indexOf(insightYear()) >= insightYears().length - 1"
+              (click)="insightYear.set(insightYears()[insightYears().indexOf(insightYear()) + 1])"
+              title="Previous year"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span class="min-w-[36px] text-center text-xs font-medium text-slate-600 dark:text-vscode-200">{{ insightYear() }}</span>
+            <button
+              class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-100"
+              [disabled]="insightYears().indexOf(insightYear()) <= 0"
+              [class.opacity-30]="insightYears().indexOf(insightYear()) <= 0"
+              (click)="insightYear.set(insightYears()[insightYears().indexOf(insightYear()) - 1])"
+              title="Next year"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <app-insight-grid [dayMap]="insightDayMap()" [year]="insightYear()" />
+        </div>
+        <div class="mt-2 flex items-center gap-1.5 text-[0.7rem] text-slate-400 dark:text-vscode-400">
+          <span>Less</span>
+          <svg width="57" height="11" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0"  y="0" width="11" height="11" rx="2" class="legend-0" />
+            <rect x="15" y="0" width="11" height="11" rx="2" class="legend-1" />
+            <rect x="30" y="0" width="11" height="11" rx="2" class="legend-2" />
+            <rect x="45" y="0" width="11" height="11" rx="2" class="legend-3" />
+          </svg>
+          <span>More</span>
+        </div>
+      </div>
+    }
   }
 </div>
