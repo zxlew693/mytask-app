@@ -3,6 +3,7 @@ import * as path from 'path';
 import { randomUUID } from 'crypto';
 import type { Project, CreateProjectPayload } from '../ipc/project.types';
 import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, TaskStatus } from '../ipc/task.types';
+import type { NoteRow, NoteListItem } from '../ipc/note.types';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const initSqlJs = require('sql.js');
@@ -65,6 +66,20 @@ export class DbService {
         FOREIGN KEY (projectId) REFERENCES projects(id) ON DELETE CASCADE
       )
     `);
+    this.db.run(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL DEFAULT 'Untitled',
+        content TEXT NOT NULL DEFAULT '',
+        updatedAt TEXT NOT NULL
+      )
+    `);
+    // migration: add title column if it doesn't exist (existing DBs)
+    try {
+      this.db.run(`ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT 'Untitled'`);
+    } catch {
+      // column already exists — ignore
+    }
   }
 
   private persist(): void {
@@ -190,6 +205,55 @@ export class DbService {
 
   deleteTask(id: string): void {
     const stmt = this.db.prepare('DELETE FROM tasks WHERE id = ?');
+    stmt.run([id]);
+    stmt.free();
+    this.persist();
+  }
+
+  // ---- Notes ----
+
+  listNotes(): NoteListItem[] {
+    return this.queryAll<NoteListItem>(
+      'SELECT id, title, updatedAt FROM notes ORDER BY updatedAt DESC'
+    );
+  }
+
+  getNote(id: string): NoteRow | null {
+    return this.queryOne<NoteRow>(
+      'SELECT id, title, content, updatedAt FROM notes WHERE id = ?',
+      [id]
+    );
+  }
+
+  createNote(title: string): NoteRow {
+    const note: NoteRow = {
+      id: randomUUID(),
+      title: title.trim() || 'Untitled',
+      content: '',
+      updatedAt: new Date().toISOString(),
+    };
+    const stmt = this.db.prepare(
+      'INSERT INTO notes (id, title, content, updatedAt) VALUES (?, ?, ?, ?)'
+    );
+    stmt.run([note.id, note.title, note.content, note.updatedAt]);
+    stmt.free();
+    this.persist();
+    return note;
+  }
+
+  upsertNote(id: string, content: string): NoteRow {
+    const updatedAt = new Date().toISOString();
+    const stmt = this.db.prepare(
+      `UPDATE notes SET content = ?, updatedAt = ? WHERE id = ?`
+    );
+    stmt.run([content, updatedAt, id]);
+    stmt.free();
+    this.persist();
+    return this.queryOne<NoteRow>('SELECT id, title, content, updatedAt FROM notes WHERE id = ?', [id])!;
+  }
+
+  deleteNote(id: string): void {
+    const stmt = this.db.prepare('DELETE FROM notes WHERE id = ?');
     stmt.run([id]);
     stmt.free();
     this.persist();

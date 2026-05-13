@@ -1,16 +1,25 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ProjectService } from '../../core/services/project.service';
+import { NoteService } from '../../core/services/note.service';
 import { SoundService } from '../../core/services/sound.service';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
+  imports: [],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class SidebarComponent {
   protected projectService = inject(ProjectService);
+  protected noteService = inject(NoteService);
   private sound = inject(SoundService);
+  private dialog = inject(MatDialog);
+  protected activeTab = this.noteService.sidebarTab;
+
+  // --- project state ---
   protected showInput = signal(false);
   protected newName = signal('');
   protected searchQuery = signal('');
@@ -23,9 +32,14 @@ export class SidebarComponent {
     return this.projectService.projects().filter(p => p.name.toLowerCase().includes(q));
   });
 
-  // null = no drag; number = insert-before index (items.length = append at end)
   protected dropIndex = signal<number | null>(null);
   private dragFromIndex: number | null = null;
+
+  // --- note state ---
+  protected showNoteInput = signal(false);
+  protected newNoteTitle = signal('');
+
+  // --- project methods ---
 
   protected onInputChange(event: Event): void {
     this.newName.set((event.target as HTMLInputElement).value);
@@ -90,7 +104,6 @@ export class SidebarComponent {
   protected onDragStart(event: DragEvent, index: number): void {
     this.dragFromIndex = index;
     event.dataTransfer!.effectAllowed = 'move';
-    // Defer so the browser snapshot is taken before the style is applied
     requestAnimationFrame(() => this.dropIndex.set(-1));
   }
 
@@ -98,7 +111,6 @@ export class SidebarComponent {
     if (this.dragFromIndex === null) return;
     event.preventDefault();
     event.dataTransfer!.dropEffect = 'move';
-
     const el = event.currentTarget as HTMLElement;
     const { top, height } = el.getBoundingClientRect();
     const insertBefore = event.clientY < top + height / 2;
@@ -106,7 +118,6 @@ export class SidebarComponent {
   }
 
   protected onDragLeave(event: DragEvent): void {
-    // Only clear when leaving the <ul>, not when moving between children
     const related = event.relatedTarget as Node | null;
     const list = (event.currentTarget as HTMLElement).closest('ul');
     if (list && related && list.contains(related)) return;
@@ -132,5 +143,53 @@ export class SidebarComponent {
 
   protected isDragging(index: number): boolean {
     return this.dragFromIndex === index;
+  }
+
+  // --- note methods ---
+
+  protected onNoteInputChange(event: Event): void {
+    this.newNoteTitle.set((event.target as HTMLInputElement).value);
+  }
+
+  protected async onAddNote(): Promise<void> {
+    const title = this.newNoteTitle().trim();
+    if (!title) return;
+    this.sound.play('decision');
+    const note = await this.noteService.create(title);
+    this.newNoteTitle.set('');
+    this.showNoteInput.set(false);
+    await this.noteService.selectNote(note.id);
+  }
+
+  protected onNoteKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') this.onAddNote();
+    if (event.key === 'Escape') {
+      this.showNoteInput.set(false);
+      this.newNoteTitle.set('');
+    }
+  }
+
+  protected async onSelectNote(id: string): Promise<void> {
+    this.sound.play('select');
+    await this.noteService.selectNote(id);
+  }
+
+  protected onDeleteNote(event: MouseEvent, note: { id: string; title: string }): void {
+    event.stopPropagation();
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete note',
+        message: `"${note.title}" will be permanently deleted.`,
+      },
+      width: '360px',
+      autoFocus: false,
+      hasBackdrop: true,
+      disableClose: false,
+    });
+    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      this.sound.play('close');
+      await this.noteService.delete(note.id);
+    });
   }
 }

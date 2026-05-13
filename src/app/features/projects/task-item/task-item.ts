@@ -19,6 +19,7 @@ export class TaskItemComponent {
 
   protected editing = signal(false);
   protected editValue = signal('');
+  protected copied = signal(false);
   private editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
 
   protected get timestamp(): string {
@@ -76,6 +77,12 @@ export class TaskItemComponent {
   protected async onRestore(): Promise<void> {
     this.sound.play('restore');
     await this.taskService.updateStatus(this.task().id, 'current');
+  }
+
+  protected async copyTitle(): Promise<void> {
+    await navigator.clipboard.writeText(this.task().title);
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 1500);
   }
 
   protected onDelete(): void {

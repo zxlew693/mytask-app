@@ -1,0 +1,35 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-100 dark:bg-vscode-900"
+  style="font-family: 'Lexend', sans-serif;"
+>
+  <div class="w-full max-w-xs rounded-2xl bg-white p-8 shadow-2xl dark:bg-vscode-800 flex flex-col gap-5">
+    <div class="flex flex-col items-center gap-2">
+      <img src="logo.png" alt="My Task" class="h-16" />
+      <span class="text-sm font-semibold text-slate-500 dark:text-vscode-300">My Task</span>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-slate-500 dark:text-vscode-400">Password</label>
+      <input
+        type="password"
+        [value]="password()"
+        (input)="password.set($any($event.target).value); errorMessage.set('')"
+        (keydown)="onKeydown($event)"
+        placeholder="Enter password"
+        autofocus
+        class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder-vscode-400 dark:focus:border-vscode-accent-500 dark:focus:ring-vscode-accent-500"
+      />
+      @if (errorMessage()) {
+        <span class="text-xs text-red-500">{{ errorMessage() }}</span>
+      }
+    </div>
+
+    <button
+      (click)="onSubmit()"
+      [disabled]="isLoading()"
+      class="w-full cursor-pointer rounded-md bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-vscode-accent-500 dark:hover:bg-vscode-accent-600"
+    >
+      {{ isLoading() ? 'Unlocking…' : 'Unlock' }}
+    </button>
+  </div>
+</div>

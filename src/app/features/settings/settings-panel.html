@@ -1,0 +1,111 @@
+<div
+  class="fixed inset-0 z-40 flex items-center justify-center bg-black/40"
+  style="font-family: 'Lexend', sans-serif;"
+  (click)="onClose()"
+>
+  <div
+    class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-vscode-800 flex flex-col gap-6"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-semibold text-slate-700 dark:text-vscode-100">Settings</span>
+      <button
+        (click)="onClose()"
+        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-100"
+        title="Close"
+      >✕</button>
+    </div>
+
+    <!-- Security section -->
+    <div class="flex flex-col gap-3">
+      <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-vscode-500">Security</span>
+      <label class="flex cursor-pointer items-center justify-between gap-4">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-sm text-slate-700 dark:text-vscode-200">Enable login on startup</span>
+          <span class="text-xs text-slate-400 dark:text-vscode-500">Takes effect on next launch</span>
+        </div>
+        <input
+          type="checkbox"
+          [checked]="loginEnabled()"
+          (change)="onToggleLogin($event)"
+          class="h-4 w-4 cursor-pointer accent-indigo-500 dark:accent-vscode-accent-500"
+        />
+      </label>
+    </div>
+
+    <!-- Change password section (only when login is enabled) -->
+    @if (loginEnabled()) {
+      <div class="flex flex-col gap-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-vscode-500">Change Password</span>
+
+        <div class="flex flex-col gap-2">
+          <div class="relative">
+            <input
+              [type]="showPasswords() ? 'text' : 'password'"
+              [value]="currentPw()"
+              (input)="currentPw.set($any($event.target).value); clearFeedback()"
+              placeholder="Current password"
+              class="w-full rounded-md border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm text-slate-800 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder-vscode-400 dark:focus:border-vscode-accent-500 dark:focus:ring-vscode-accent-500"
+            />
+            <button type="button" tabindex="-1" (click)="showPasswords.set(!showPasswords())" class="absolute inset-y-0 right-2 flex cursor-pointer items-center text-slate-400 hover:text-slate-600 dark:text-vscode-500 dark:hover:text-vscode-300">
+              <ng-container *ngTemplateOutlet="eyeIcon" />
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              [type]="showPasswords() ? 'text' : 'password'"
+              [value]="newPw()"
+              (input)="newPw.set($any($event.target).value); clearFeedback()"
+              placeholder="New password"
+              class="w-full rounded-md border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm text-slate-800 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder-vscode-400 dark:focus:border-vscode-accent-500 dark:focus:ring-vscode-accent-500"
+            />
+            <button type="button" tabindex="-1" (click)="showPasswords.set(!showPasswords())" class="absolute inset-y-0 right-2 flex cursor-pointer items-center text-slate-400 hover:text-slate-600 dark:text-vscode-500 dark:hover:text-vscode-300">
+              <ng-container *ngTemplateOutlet="eyeIcon" />
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              [type]="showPasswords() ? 'text' : 'password'"
+              [value]="confirmPw()"
+              (input)="confirmPw.set($any($event.target).value); clearFeedback()"
+              placeholder="Confirm new password"
+              class="w-full rounded-md border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm text-slate-800 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:border-vscode-600 dark:bg-vscode-700 dark:text-vscode-100 dark:placeholder-vscode-400 dark:focus:border-vscode-accent-500 dark:focus:ring-vscode-accent-500"
+            />
+            <button type="button" tabindex="-1" (click)="showPasswords.set(!showPasswords())" class="absolute inset-y-0 right-2 flex cursor-pointer items-center text-slate-400 hover:text-slate-600 dark:text-vscode-500 dark:hover:text-vscode-300">
+              <ng-container *ngTemplateOutlet="eyeIcon" />
+            </button>
+          </div>
+        </div>
+
+        <ng-template #eyeIcon>
+          @if (showPasswords()) {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          }
+        </ng-template>
+
+        @if (pwError()) {
+          <span class="text-xs text-red-500">{{ pwError() }}</span>
+        }
+        @if (pwSuccess()) {
+          <span class="text-xs text-green-600 dark:text-green-400">{{ pwSuccess() }}</span>
+        }
+
+        <button
+          (click)="onChangePassword()"
+          [disabled]="isSaving()"
+          class="cursor-pointer self-end rounded-md bg-indigo-500 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-vscode-accent-500 dark:hover:bg-vscode-accent-600"
+        >
+          {{ isSaving() ? 'Changing…' : 'Change Password' }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

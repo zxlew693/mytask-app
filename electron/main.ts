@@ -1,8 +1,11 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { DbService } from './store/db.service';
+import { SettingsService } from './store/settings.service';
 import { registerProjectHandlers } from './ipc/project.ipc';
 import { registerTaskHandlers } from './ipc/task.ipc';
+import { registerSettingsHandlers } from './ipc/settings.ipc';
+import { registerNoteHandlers } from './ipc/note.ipc';
 import { Channels } from './ipc/channels';
 
 const isDev = process.env['NODE_ENV'] === 'development';
@@ -35,8 +38,13 @@ app.whenReady().then(async () => {
   const db = new DbService(dbPath);
   await db.ready;
 
+  const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+  const settings = new SettingsService(settingsPath);
+
   registerProjectHandlers(db);
   registerTaskHandlers(db);
+  registerSettingsHandlers(settings);
+  registerNoteHandlers(db);
 
   ipcMain.on(Channels.WINDOW_CLOSE, () => {
     BrowserWindow.getFocusedWindow()?.close();
