@@ -96,13 +96,24 @@
       (mousedown)="onResizeStart($event)"
     ></div>
     <main class="flex flex-1 flex-col overflow-hidden">
-      <app-notes-editor
-        class="flex flex-1 flex-col overflow-hidden"
-        [class.hidden]="noteService.sidebarTab() !== 'notes' || !noteService.selectedNoteId()"
-      />
+      <!-- Notes tab -->
+      @if (noteService.sidebarTab() === 'notes') {
+        @if (!noteService.selectedNoteId()) {
+          <div class="flex flex-1 items-center justify-center text-xs text-slate-400 dark:text-vscode-400">
+            Select a note to start editing
+          </div>
+        } @else if (!cryptoService.hasKey()) {
+          <div class="flex flex-1 items-center justify-center text-xs text-slate-400 dark:text-vscode-400">
+            Notes are locked. Log in to view.
+          </div>
+        } @else {
+          <app-notes-editor class="flex flex-1 flex-col overflow-hidden" />
+        }
+      }
+      <!-- Projects tab -->
       <div
         class="flex flex-1 flex-col overflow-y-auto p-6"
-        [class.hidden]="noteService.sidebarTab() === 'notes' && noteService.selectedNoteId()"
+        [class.hidden]="noteService.sidebarTab() === 'notes'"
       >
         <app-project-board class="flex flex-1 flex-col" />
       </div>

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskItemComponent } from '../task-item/task-item';
 import { InsightGridComponent } from './insight-grid';
@@ -7,7 +7,7 @@ import { TaskService } from '../../../core/services/task.service';
 import { SoundService } from '../../../core/services/sound.service';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
 import type { Project } from '../../../core/models/project.model';
-import type { TaskStatus } from '../../../core/models/task.model';
+import type { Task, TaskStatus } from '../../../core/models/task.model';
 
 type ActiveTab = TaskStatus | 'insight';
 
@@ -30,14 +30,54 @@ export class ProjectCardComponent implements OnInit {
   protected isExpanded = signal(true);
   protected newTaskTitle = signal('');
 
-  protected insightMode = signal<'created' | 'completed' | 'cancelled'>('created');
+  protected filterYear  = signal<number | 'all'>('all');
+  protected filterMonth = signal<number | 'all'>('all');
+
+  protected insightMode = signal<'completed' | 'created' | 'cancelled'>('completed');
   protected readonly insightModes = [
-    { value: 'created' as const, label: 'Created' },
     { value: 'completed' as const, label: 'Completed' },
+    { value: 'created' as const, label: 'Created' },
     { value: 'cancelled' as const, label: 'Cancelled' },
   ];
 
   protected insightYear = signal<number>(new Date().getFullYear());
+
+  constructor() {
+    effect(() => {
+      this.filterYear();
+      this.filterMonth.set('all');
+    });
+  }
+
+  protected filterYears = computed((): number[] => {
+    const projectId = this.project().id;
+    const years = new Set<number>();
+    for (const task of this.taskService.tasks()) {
+      if (task.projectId !== projectId) continue;
+      const dates = [task.completedAt, task.cancelledAt];
+      for (const d of dates) {
+        if (d) years.add(new Date(d).getFullYear());
+      }
+    }
+    return Array.from(years).sort((a, b) => b - a);
+  });
+
+  protected filterMonths = computed((): number[] => {
+    const year = this.filterYear();
+    const projectId = this.project().id;
+    if (year === 'all') return Array.from({ length: 12 }, (_, i) => i);
+    const months = new Set<number>();
+    for (const task of this.taskService.tasks()) {
+      if (task.projectId !== projectId) continue;
+      const dates = [task.completedAt, task.cancelledAt];
+      for (const d of dates) {
+        if (!d) continue;
+        const dt = new Date(d);
+        if (dt.getFullYear() === year) months.add(dt.getMonth());
+      }
+    }
+    return Array.from(months).sort((a, b) => a - b);
+  });
 
   protected insightYears = computed((): number[] => {
     const projectId = this.project().id;
@@ -56,12 +96,14 @@ export class ProjectCardComponent implements OnInit {
   protected currentTasks = computed(() =>
     this.taskService.tasks().filter(t => t.projectId === this.project().id && t.status === 'current')
   );
-  protected completedTasks = computed(() =>
-    this.taskService.tasks().filter(t => t.projectId === this.project().id && t.status === 'completed')
-  );
-  protected cancelledTasks = computed(() =>
-    this.taskService.tasks().filter(t => t.projectId === this.project().id && t.status === 'cancelled')
-  );
+  protected completedTasks = computed(() => {
+    const base = this.taskService.tasks().filter(t => t.projectId === this.project().id && t.status === 'completed');
+    return this.filterByDate(base, 'completedAt');
+  });
+  protected cancelledTasks = computed(() => {
+    const base = this.taskService.tasks().filter(t => t.projectId === this.project().id && t.status === 'cancelled');
+    return this.filterByDate(base, 'cancelledAt');
+  });
   protected visibleTasks = computed(() => {
     switch (this.activeTab()) {
       case 'completed': return this.completedTasks();
@@ -98,6 +140,24 @@ export class ProjectCardComponent implements OnInit {
     }
     return map;
   });
+
+  private filterByDate(tasks: Task[], dateField: 'completedAt' | 'cancelledAt'): Task[] {
+    const year = this.filterYear();
+    const month = this.filterMonth();
+    return tasks.filter(t => {
+      const raw = t[dateField];
+      if (!raw) return false;
+      if (year === 'all') return true;
+      const dt = new Date(raw);
+      if (dt.getFullYear() !== year) return false;
+      if (month === 'all') return true;
+      return dt.getMonth() === month;
+    });
+  }
+
+  protected monthName(month: number): string {
+    return new Date(2000, month, 1).toLocaleString(undefined, { month: 'long' });
+  }
 
   ngOnInit(): void {
     // Tasks already loaded globally in AppComponent; nothing extra needed

@@ -51,6 +51,22 @@ export class NoteService {
     );
   }
 
+  reorder(fromIndex: number, toIndex: number): void {
+    this._notes.update(list => {
+      const next = [...list];
+      const [item] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, item);
+      return next;
+    });
+  }
+
+  async rename(id: string, title: string): Promise<void> {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    const updated = await this.api.notes.rename({ id, title: trimmed });
+    this._notes.update(list => list.map(n => n.id === id ? { ...n, title: updated.title, updatedAt: updated.updatedAt } : n));
+  }
+
   async delete(id: string): Promise<void> {
     await this.api.notes.delete({ id });
     this._notes.update(list => list.filter(n => n.id !== id));

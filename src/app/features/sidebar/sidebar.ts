@@ -38,6 +38,8 @@ export class SidebarComponent {
   // --- note state ---
   protected showNoteInput = signal(false);
   protected newNoteTitle = signal('');
+  protected noteDropIndex = signal<number | null>(null);
+  private noteDragFromIndex: number | null = null;
 
   // --- project methods ---
 
@@ -104,7 +106,6 @@ export class SidebarComponent {
   protected onDragStart(event: DragEvent, index: number): void {
     this.dragFromIndex = index;
     event.dataTransfer!.effectAllowed = 'move';
-    requestAnimationFrame(() => this.dropIndex.set(-1));
   }
 
   protected onDragOver(event: DragEvent, index: number): void {
@@ -128,7 +129,7 @@ export class SidebarComponent {
     event.preventDefault();
     const from = this.dragFromIndex;
     const to = this.dropIndex();
-    if (from !== null && to !== null && to !== -1) {
+    if (from !== null && to !== null) {
       const adjusted = to > from ? to - 1 : to;
       if (adjusted !== from) this.projectService.reorder(from, adjusted);
     }
@@ -143,6 +144,51 @@ export class SidebarComponent {
 
   protected isDragging(index: number): boolean {
     return this.dragFromIndex === index;
+  }
+
+  // --- note drag methods ---
+
+  protected onNoteDragStart(event: DragEvent, index: number): void {
+    this.noteDragFromIndex = index;
+    event.dataTransfer!.effectAllowed = 'move';
+  }
+
+  protected onNoteDragOver(event: DragEvent, index: number): void {
+    if (this.noteDragFromIndex === null) return;
+    event.preventDefault();
+    event.dataTransfer!.dropEffect = 'move';
+    const el = event.currentTarget as HTMLElement;
+    const { top, height } = el.getBoundingClientRect();
+    const insertBefore = event.clientY < top + height / 2;
+    this.noteDropIndex.set(insertBefore ? index : index + 1);
+  }
+
+  protected onNoteDragLeave(event: DragEvent): void {
+    const related = event.relatedTarget as Node | null;
+    const list = (event.currentTarget as HTMLElement).closest('ul');
+    if (list && related && list.contains(related)) return;
+    this.noteDropIndex.set(null);
+  }
+
+  protected onNoteDrop(event: DragEvent): void {
+    event.preventDefault();
+    const from = this.noteDragFromIndex;
+    const to = this.noteDropIndex();
+    if (from !== null && to !== null) {
+      const adjusted = to > from ? to - 1 : to;
+      if (adjusted !== from) this.noteService.reorder(from, adjusted);
+    }
+    this.noteDragFromIndex = null;
+    this.noteDropIndex.set(null);
+  }
+
+  protected onNoteDragEnd(): void {
+    this.noteDragFromIndex = null;
+    this.noteDropIndex.set(null);
+  }
+
+  protected isNoteDragging(index: number): boolean {
+    return this.noteDragFromIndex === index;
   }
 
   // --- note methods ---

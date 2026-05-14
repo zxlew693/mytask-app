@@ -1,92 +1,45 @@
-<div class="flex h-full flex-col overflow-hidden">
-  @if (!noteService.selectedNoteId()) {
-    <div class="flex flex-1 items-center justify-center p-4 text-xs text-slate-400 dark:text-vscode-400">
-      Select a note to start editing
-    </div>
-  } @else if (!hasKey()) {
-    <div class="flex flex-1 items-center justify-center p-4 text-xs text-slate-400 dark:text-vscode-400">
-      Notes are locked. Log in to view.
-    </div>
-  } @else {
-    <div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-3 py-1.5 dark:border-vscode-600">
-      <div class="flex gap-0.5">
-        <button
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-xs font-bold transition-colors"
-          [class.bg-vscode-accent-500]="isActive('bold')"
-          [class.text-white]="isActive('bold')"
-          [class.text-slate-500]="!isActive('bold')"
-          [class.hover:bg-slate-200]="!isActive('bold')"
-          [class.dark:text-vscode-300]="!isActive('bold')"
-          [class.dark:hover:bg-vscode-700]="!isActive('bold')"
-          (click)="toggleBold()"
-          title="Bold"
-        >B</button>
-        <button
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-xs italic transition-colors"
-          [class.bg-vscode-accent-500]="isActive('italic')"
-          [class.text-white]="isActive('italic')"
-          [class.text-slate-500]="!isActive('italic')"
-          [class.hover:bg-slate-200]="!isActive('italic')"
-          [class.dark:text-vscode-300]="!isActive('italic')"
-          [class.dark:hover:bg-vscode-700]="!isActive('italic')"
-          (click)="toggleItalic()"
-          title="Italic"
-        >I</button>
-        <button
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded transition-colors"
-          [class.bg-vscode-accent-500]="isActive('bulletList')"
-          [class.text-white]="isActive('bulletList')"
-          [class.text-slate-500]="!isActive('bulletList')"
-          [class.hover:bg-slate-200]="!isActive('bulletList')"
-          [class.dark:text-vscode-300]="!isActive('bulletList')"
-          [class.dark:hover:bg-vscode-700]="!isActive('bulletList')"
-          (click)="toggleBulletList()"
-          title="Bullet list"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <line x1="9" y1="6" x2="20" y2="6" stroke-linecap="round"/>
-            <line x1="9" y1="12" x2="20" y2="12" stroke-linecap="round"/>
-            <line x1="9" y1="18" x2="20" y2="18" stroke-linecap="round"/>
-            <circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/>
-            <circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-            <circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/>
-          </svg>
-        </button>
-        <button
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded transition-colors"
-          [class.bg-vscode-accent-500]="isActive('orderedList')"
-          [class.text-white]="isActive('orderedList')"
-          [class.text-slate-500]="!isActive('orderedList')"
-          [class.hover:bg-slate-200]="!isActive('orderedList')"
-          [class.dark:text-vscode-300]="!isActive('orderedList')"
-          [class.dark:hover:bg-vscode-700]="!isActive('orderedList')"
-          (click)="toggleOrderedList()"
-          title="Ordered list"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <line x1="9" y1="6" x2="20" y2="6" stroke-linecap="round"/>
-            <line x1="9" y1="12" x2="20" y2="12" stroke-linecap="round"/>
-            <line x1="9" y1="18" x2="20" y2="18" stroke-linecap="round"/>
-            <text x="1" y="8" font-size="7" fill="currentColor" stroke="none">1</text>
-            <text x="1" y="14" font-size="7" fill="currentColor" stroke="none">2</text>
-            <text x="1" y="20" font-size="7" fill="currentColor" stroke="none">3</text>
-          </svg>
-        </button>
-      </div>
-      @if (isSaving()) {
-        <span class="text-[0.6rem] text-slate-400 dark:text-vscode-500">Saving…</span>
-      }
-    </div>
+<div class="notes-quill-editor flex h-full flex-col overflow-hidden">
 
-    <div
-      #editorEl
-      class="flex-1 overflow-y-auto px-3 py-2 text-sm text-slate-700 dark:text-vscode-100
-             [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-full
-             [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-4
-             [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-4
-             [&_.ProseMirror_p]:my-1
-             [&_.ProseMirror_strong]:font-bold
-             [&_.ProseMirror_em]:italic"
-    ></div>
-  }
+  <!-- Title row -->
+  <div class="flex shrink-0 items-center gap-1.5 border-b border-slate-200 px-3 py-2 dark:border-vscode-600">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-vscode-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    @if (editingTitle()) {
+      <input
+        #titleInput
+        class="min-w-0 flex-1 rounded border border-vscode-accent-500 bg-white px-1.5 py-0.5 text-sm font-semibold text-slate-700 outline-none dark:bg-vscode-800 dark:text-vscode-100"
+        [value]="titleDraft()"
+        (input)="titleDraft.set($any($event.target).value)"
+        (blur)="commitTitle()"
+        (keydown)="onTitleKeydown($event)"
+        spellcheck="false"
+        autofocus
+      />
+    } @else {
+      <span
+        class="min-w-0 flex-1 cursor-text overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-vscode-100 dark:hover:bg-vscode-700 dark:hover:text-vscode-300"
+        (dblclick)="startEditingTitle()"
+        title="Double-click to rename"
+      >{{ selectedNote()?.title ?? 'Untitled' }}</span>
+    }
+
+    @if (isSaving()) {
+      <svg class="h-3.5 w-3.5 shrink-0 animate-spin text-slate-400 dark:text-vscode-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+    }
+    <button
+      class="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-200 dark:text-vscode-300 dark:hover:bg-vscode-700"
+      (click)="exportAsText()"
+      title="Export as text file"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+      </svg>
+    </button>
+  </div>
+
+  <div #editorEl class="notes-quill-mount min-h-0 flex-1"></div>
 </div>

@@ -2,11 +2,11 @@ import { InjectionToken } from '@angular/core';
 import type { IpcEnvelope, Project, CreateProjectPayload, DeleteProjectPayload, RenameProjectPayload } from '../../../electron/ipc/project.types';
 import type { Task, CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, DeleteTaskPayload } from '../../../electron/ipc/task.types';
 import type { AppSettings, SaveSettingsPayload } from '../../../electron/ipc/settings.types';
-import type { NoteRow, NoteListItem, CreateNotePayload, UpsertNotePayload, DeleteNotePayload } from '../../../electron/ipc/note.types';
+import type { NoteRow, NoteListItem, CreateNotePayload, UpsertNotePayload, DeleteNotePayload, RenameNotePayload } from '../../../electron/ipc/note.types';
 
 export type { IpcEnvelope };
 export type { AppSettings, SaveSettingsPayload };
-export type { NoteRow, NoteListItem, CreateNotePayload, UpsertNotePayload, DeleteNotePayload };
+export type { NoteRow, NoteListItem, CreateNotePayload, UpsertNotePayload, DeleteNotePayload, RenameNotePayload };
 
 export interface ElectronApi {
   projects: {
@@ -32,6 +32,7 @@ export interface ElectronApi {
     create(payload: CreateNotePayload): Promise<NoteRow>;
     upsert(payload: UpsertNotePayload): Promise<NoteRow>;
     delete(payload: DeleteNotePayload): Promise<void>;
+    rename(payload: RenameNotePayload): Promise<NoteListItem>;
   };
 }
 

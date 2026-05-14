@@ -1,4 +1,156 @@
 <div class="flex h-full flex-col">
+
+  <!-- Toolbar -->
+  <div class="mb-4 flex items-center justify-end gap-2">
+    <button
+      class="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-blue-400 hover:text-blue-500 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-300 dark:hover:border-blue-400 dark:hover:text-blue-400"
+      (click)="openImportPanel()"
+      title="Import projects from JSON"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+      </svg>
+      Import
+    </button>
+    <button
+      class="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-blue-400 hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-40 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-300 dark:hover:border-blue-400 dark:hover:text-blue-400"
+      (click)="openExportPanel()"
+      [disabled]="projectService.projects().length === 0"
+      title="Export projects to JSON"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      Export
+    </button>
+  </div>
+
+  <!-- Export panel -->
+  @if (panelMode() === 'export') {
+    <div class="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-vscode-600 dark:bg-vscode-800">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-vscode-700">
+        <span class="text-sm font-semibold text-slate-700 dark:text-vscode-100">Export Projects</span>
+        <button
+          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-200"
+          (click)="closePanel()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="border-b border-slate-100 px-5 py-2.5 dark:border-vscode-700">
+        <label class="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-slate-500 dark:text-vscode-300">
+          <input
+            type="checkbox"
+            class="h-3.5 w-3.5 cursor-pointer"
+            [checked]="allExportSelected()"
+            (change)="toggleSelectAll()"
+          />
+          Select all
+        </label>
+      </div>
+      <div class="max-h-52 overflow-y-auto px-5 py-2">
+        @for (project of projectService.projects(); track project.id) {
+          <label class="flex cursor-pointer items-center gap-2.5 py-1.5 text-sm text-slate-700 dark:text-vscode-200">
+            <input
+              type="checkbox"
+              class="h-3.5 w-3.5 cursor-pointer"
+              [checked]="exportSelectedIds().has(project.id)"
+              (change)="toggleExportProject(project.id)"
+            />
+            <span class="flex-1 truncate">{{ project.name }}</span>
+            <span class="ml-2 shrink-0 text-xs text-slate-400 dark:text-vscode-400">
+              {{ taskCountForProject(project.id) }} task{{ taskCountForProject(project.id) !== 1 ? 's' : '' }}
+            </span>
+          </label>
+        }
+      </div>
+      <div class="flex items-center justify-between border-t border-slate-100 px-5 py-3 dark:border-vscode-700">
+        <span class="text-xs text-slate-400 dark:text-vscode-400">{{ exportSelectedIds().size }} selected</span>
+        <button
+          class="cursor-pointer rounded-md bg-blue-500 px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="exportSelectedIds().size === 0"
+          (click)="runExport()"
+        >Download JSON</button>
+      </div>
+    </div>
+  }
+
+  <!-- Import panel -->
+  @if (panelMode() === 'import') {
+    <div class="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-vscode-600 dark:bg-vscode-800">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-vscode-700">
+        <span class="text-sm font-semibold text-slate-700 dark:text-vscode-100">Import Projects</span>
+        <button
+          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-vscode-400 dark:hover:bg-vscode-700 dark:hover:text-vscode-200"
+          (click)="closePanel()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-col gap-3 px-5 py-4">
+        <p class="text-xs text-slate-500 dark:text-vscode-400">
+          Select a <code class="rounded bg-slate-100 px-1 font-mono dark:bg-vscode-700">.json</code> file previously exported from My Task.
+          Projects and tasks will be created with new IDs — existing data is not overwritten.
+        </p>
+
+        <input
+          #fileInput
+          type="file"
+          accept=".json,application/json"
+          class="hidden"
+          (change)="onFileSelected($event)"
+        />
+
+        @if (importStatus() === 'idle') {
+          <button
+            class="self-start cursor-pointer rounded-md border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 transition-colors hover:border-blue-400 hover:text-blue-500 dark:border-vscode-600 dark:bg-vscode-750 dark:text-vscode-200 dark:hover:border-blue-400"
+            (click)="triggerFileInput()"
+          >Choose file…</button>
+        }
+
+        @if (importStatus() === 'loading') {
+          <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-vscode-400">
+            <svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            Importing…
+          </div>
+        }
+
+        @if (importStatus() === 'success') {
+          <div class="flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-900/20 dark:text-green-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {{ importMessage() }}
+          </div>
+          <button
+            class="self-start cursor-pointer rounded-md border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 transition-colors hover:border-blue-400 hover:text-blue-500 dark:border-vscode-600 dark:bg-vscode-750 dark:text-vscode-200 dark:hover:border-blue-400"
+            (click)="triggerFileInput()"
+          >Import another…</button>
+        }
+
+        @if (importStatus() === 'error') {
+          <div class="flex items-center gap-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-600 dark:bg-red-900/20 dark:text-red-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {{ importMessage() }}
+          </div>
+          <button
+            class="self-start cursor-pointer rounded-md border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-600 transition-colors hover:border-blue-400 hover:text-blue-500 dark:border-vscode-600 dark:bg-vscode-750 dark:text-vscode-200 dark:hover:border-blue-400"
+            (click)="triggerFileInput()"
+          >Try again…</button>
+        }
+      </div>
+    </div>
+  }
+
   @for (project of projectService.projects(); track project.id) {
     @if (projectService.isOpen(project.id)) {
       <app-project-card [project]="project" />

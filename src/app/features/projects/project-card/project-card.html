@@ -108,6 +108,31 @@
       </button>
     </div>
 
+    @if (activeTab() === 'completed' || activeTab() === 'cancelled') {
+      <div class="flex items-center gap-2 border-b border-slate-100 px-4 py-1.5 dark:border-vscode-700">
+        <select
+          class="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-600 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-300"
+          [value]="filterYear()"
+          (change)="filterYear.set($any($event.target).value === 'all' ? 'all' : +$any($event.target).value)"
+        >
+          <option value="all">All years</option>
+          @for (y of filterYears(); track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+        <select
+          class="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-600 dark:border-vscode-600 dark:bg-vscode-800 dark:text-vscode-300"
+          [value]="filterMonth()"
+          (change)="filterMonth.set($any($event.target).value === 'all' ? 'all' : +$any($event.target).value)"
+        >
+          <option value="all">All months</option>
+          @for (m of filterMonths(); track m) {
+            <option [value]="m">{{ monthName(m) }}</option>
+          }
+        </select>
+      </div>
+    }
+
     @if (activeTab() === 'current') {
       <div class="flex gap-2 px-4 pt-3">
         <input

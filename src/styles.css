@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "@fontsource/lexend";
+@import "@fontsource/inter";
+@import "@fontsource/roboto";
+@import "quill/dist/quill.snow.css";
 
 /* Modern scrollbar — hidden until hover on the scrollable container */
 * {
@@ -35,6 +38,173 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Quill editor overrides */
+.notes-export-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 2px 8px;
+}
+.notes-quill-mount {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.notes-quill-mount .ql-toolbar.ql-snow {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 4px 8px;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.notes-quill-mount .ql-container.ql-snow {
+  border: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: white;
+}
+.notes-quill-mount .ql-editor {
+  padding: 8px 12px;
+  min-height: 100%;
+  color: #334155;
+  line-height: 1.6;
+}
+/* Keep browser selection highlight visible when editor is unfocused */
+.notes-quill-mount .ql-editor ::selection {
+  background: #b3d4fc;
+}
+.dark .notes-quill-mount .ql-editor ::selection {
+  background: #1e4976;
+}
+.notes-quill-mount .ql-editor.ql-blank::before {
+  color: #94a3b8;
+  font-style: normal;
+}
+
+/* Font family options */
+.ql-font-sans-serif { font-family: ui-sans-serif, system-ui, sans-serif; }
+.ql-font-serif      { font-family: Georgia, serif; }
+.ql-font-monospace  { font-family: ui-monospace, monospace; }
+.ql-font-arial      { font-family: Arial, Helvetica, sans-serif; }
+.ql-font-calibri    { font-family: Calibri, Candara, sans-serif; }
+.ql-font-lexend     { font-family: 'Lexend', sans-serif; }
+.ql-font-inter      { font-family: 'Inter', sans-serif; }
+.ql-font-roboto     { font-family: 'Roboto', sans-serif; }
+
+/* Size picker labels */
+.ql-picker.ql-size .ql-picker-label:not([data-value])::before        { content: "Size"; }
+.ql-picker.ql-size .ql-picker-item:not([data-value])::before         { content: "Default"; }
+.ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="10px"]::before        { content: "10"; font-size: 10px; }
+.ql-picker.ql-size .ql-picker-label[data-value="12px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="12px"]::before        { content: "12"; font-size: 12px; }
+.ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="14px"]::before        { content: "14"; font-size: 14px; }
+.ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="16px"]::before        { content: "16"; font-size: 16px; }
+.ql-picker.ql-size .ql-picker-label[data-value="18px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="18px"]::before        { content: "18"; font-size: 18px; }
+.ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="20px"]::before        { content: "20"; font-size: 20px; }
+.ql-picker.ql-size .ql-picker-label[data-value="24px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="24px"]::before        { content: "24"; font-size: 24px; }
+.ql-picker.ql-size .ql-picker-label[data-value="28px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="28px"]::before        { content: "28"; font-size: 28px; }
+.ql-picker.ql-size .ql-picker-label[data-value="32px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="32px"]::before        { content: "32"; font-size: 32px; }
+.ql-picker.ql-size .ql-picker-label[data-value="36px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="36px"]::before        { content: "36"; font-size: 36px; }
+.ql-picker.ql-size .ql-picker-label[data-value="48px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="48px"]::before        { content: "48"; font-size: 48px; }
+.ql-picker.ql-size .ql-picker-label[data-value="64px"]::before,
+.ql-picker.ql-size .ql-picker-item[data-value="64px"]::before        { content: "64"; font-size: 64px; }
+
+/* Apply actual size in editor */
+.ql-size-10px { font-size: 10px; }
+.ql-size-12px { font-size: 12px; }
+.ql-size-14px { font-size: 14px; }
+.ql-size-16px { font-size: 16px; }
+.ql-size-18px { font-size: 18px; }
+.ql-size-20px { font-size: 20px; }
+.ql-size-24px { font-size: 24px; }
+.ql-size-28px { font-size: 28px; }
+.ql-size-32px { font-size: 32px; }
+.ql-size-36px { font-size: 36px; }
+.ql-size-48px { font-size: 48px; }
+.ql-size-64px { font-size: 64px; }
+
+/* Show font names in their own font in the picker dropdown */
+.ql-picker.ql-font .ql-picker-item[data-value="arial"]::before      { content: "Arial";      font-family: Arial, Helvetica, sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="calibri"]::before    { content: "Calibri";    font-family: Calibri, Candara, sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="lexend"]::before     { content: "Lexend";     font-family: 'Lexend', sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="inter"]::before      { content: "Inter";      font-family: 'Inter', sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before     { content: "Roboto";     font-family: 'Roboto', sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before { content: "Sans Serif"; font-family: ui-sans-serif, system-ui, sans-serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="serif"]::before      { content: "Serif";      font-family: Georgia, serif; }
+.ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before  { content: "Monospace";  font-family: ui-monospace, monospace; }
+.ql-picker.ql-font .ql-picker-item:not([data-value])::before        { content: "Default"; }
+
+/* Also fix the selected label shown in the toolbar */
+.ql-picker.ql-font .ql-picker-label[data-value="arial"]::before      { content: "Arial"; }
+.ql-picker.ql-font .ql-picker-label[data-value="calibri"]::before    { content: "Calibri"; }
+.ql-picker.ql-font .ql-picker-label[data-value="lexend"]::before     { content: "Lexend"; }
+.ql-picker.ql-font .ql-picker-label[data-value="inter"]::before      { content: "Inter"; }
+.ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before     { content: "Roboto"; }
+.ql-picker.ql-font .ql-picker-label[data-value="sans-serif"]::before { content: "Sans Serif"; }
+.ql-picker.ql-font .ql-picker-label[data-value="serif"]::before      { content: "Serif"; }
+.ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before  { content: "Monospace"; }
+.ql-picker.ql-font .ql-picker-label:not([data-value])::before        { content: "Font"; }
+
+/* Dark mode */
+.dark .notes-export-bar {
+  border-bottom-color: #454545;
+}
+.dark .notes-quill-mount .ql-toolbar.ql-snow {
+  border-bottom-color: #454545;
+  background: transparent;
+}
+.dark .notes-quill-mount .ql-toolbar .ql-stroke {
+  stroke: #858585;
+}
+.dark .notes-quill-mount .ql-toolbar .ql-fill {
+  fill: #858585;
+}
+.dark .notes-quill-mount .ql-toolbar .ql-picker-label {
+  color: #858585;
+}
+.dark .notes-quill-mount .ql-toolbar button:hover .ql-stroke,
+.dark .notes-quill-mount .ql-toolbar button.ql-active .ql-stroke {
+  stroke: #d4d4d4;
+}
+.dark .notes-quill-mount .ql-toolbar button:hover .ql-fill,
+.dark .notes-quill-mount .ql-toolbar button.ql-active .ql-fill {
+  fill: #d4d4d4;
+}
+.dark .notes-quill-mount .ql-toolbar .ql-picker-label:hover,
+.dark .notes-quill-mount .ql-toolbar .ql-picker-label.ql-active {
+  color: #d4d4d4;
+}
+.dark .notes-quill-mount .ql-toolbar .ql-picker-options {
+  background: #2d2d2d;
+  border-color: #454545;
+  color: #d4d4d4;
+}
+.dark .notes-quill-mount .ql-container.ql-snow {
+  background: transparent;
+}
+.dark .notes-quill-mount .ql-editor {
+  color: #d4d4d4;
+}
+.dark .notes-quill-mount .ql-editor.ql-blank::before {
+  color: #555555;
+}
 
 .dark .mat-mdc-dialog-surface {
   background-color: #2d2d2d !important;

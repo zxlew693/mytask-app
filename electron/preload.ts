@@ -3,7 +3,7 @@ import { Channels } from './ipc/channels';
 import type { CreateProjectPayload, DeleteProjectPayload, RenameProjectPayload } from './ipc/project.types';
 import type { CreateTaskPayload, UpdateTaskStatusPayload, UpdateTaskTitlePayload, DeleteTaskPayload } from './ipc/task.types';
 import type { SaveSettingsPayload } from './ipc/settings.types';
-import type { CreateNotePayload, UpsertNotePayload, DeleteNotePayload } from './ipc/note.types';
+import type { CreateNotePayload, UpsertNotePayload, DeleteNotePayload, RenameNotePayload } from './ipc/note.types';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   window: {
@@ -45,5 +45,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     create: (payload: CreateNotePayload) => ipcRenderer.invoke(Channels.NOTE_CREATE, payload),
     upsert: (payload: UpsertNotePayload) => ipcRenderer.invoke(Channels.NOTE_UPSERT, payload),
     delete: (payload: DeleteNotePayload) => ipcRenderer.invoke(Channels.NOTE_DELETE, payload),
+    rename: (payload: RenameNotePayload) => ipcRenderer.invoke(Channels.NOTE_RENAME, payload),
   },
 });

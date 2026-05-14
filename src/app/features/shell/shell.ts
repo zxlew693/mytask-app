@@ -6,6 +6,7 @@ import { ThemeService } from '../../core/services/theme.service';
 import { SoundService } from '../../core/services/sound.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NoteService } from '../../core/services/note.service';
+import { NotesCryptoService } from '../../core/services/notes-crypto.service';
 import { SettingsPanelComponent } from '../settings/settings-panel';
 
 const MIN_WIDTH = 160;
@@ -22,6 +23,7 @@ export class ShellComponent {
   sound = inject(SoundService);
   auth = inject(AuthService);
   protected noteService = inject(NoteService);
+  protected cryptoService = inject(NotesCryptoService);
   sidebarWidth = signal(240);
   isMaximized = signal(false);
   settingsOpen = signal(false);

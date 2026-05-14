@@ -59,8 +59,15 @@
       </div>
     }
 
-    <ul class="flex flex-1 flex-col overflow-y-auto py-2 [scrollbar-gutter:stable]">
-      @for (note of noteService.notes(); track note.id) {
+    <ul
+      class="flex flex-1 flex-col overflow-y-auto py-2 [scrollbar-gutter:stable]"
+      (dragover)="$event.preventDefault()"
+      (drop)="onNoteDrop($event)"
+    >
+      @for (note of noteService.notes(); track note.id; let i = $index) {
+        @if (noteDropIndex() === i) {
+          <li class="mx-3 my-px shrink-0 border-t-2 border-dashed border-vscode-accent-500" aria-hidden="true"></li>
+        }
         <li
           class="group flex cursor-pointer items-center gap-1.5 border-l-[3px] py-2.5 pl-3 pr-3 text-sm text-slate-600 transition-colors dark:text-vscode-200"
           [class.border-vscode-accent-500]="noteService.selectedNoteId() === note.id"
@@ -72,11 +79,26 @@
           [class.border-transparent]="noteService.selectedNoteId() !== note.id"
           [class.hover:bg-slate-100]="noteService.selectedNoteId() !== note.id"
           [class.dark:hover:bg-vscode-600]="noteService.selectedNoteId() !== note.id"
+          [class.opacity-40]="isNoteDragging(i)"
+          (dragover)="onNoteDragOver($event, i)"
+          (drop)="onNoteDrop($event)"
           (click)="onSelectNote(note.id)"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-vscode-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
+          <!-- Note icon as drag handle -->
+          <span
+            class="shrink-0 cursor-grab touch-none text-slate-300 hover:text-slate-500 active:cursor-grabbing dark:text-vscode-500 dark:hover:text-vscode-300"
+            draggable="true"
+            (dragstart)="onNoteDragStart($event, i); $event.stopPropagation()"
+            (dragend)="onNoteDragEnd(); $event.stopPropagation()"
+            (click)="$event.stopPropagation()"
+            (mousedown)="$event.stopPropagation()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+              <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+              <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+              <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+            </svg>
+          </span>
           <span class="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap select-none">{{ note.title }}</span>
           <button
             class="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded text-slate-300 opacity-0 transition-colors hover:bg-red-100 hover:text-red-500 group-hover:opacity-100 dark:text-vscode-500 dark:hover:bg-red-900/30 dark:hover:text-red-400"
@@ -91,7 +113,11 @@
             </svg>
           </button>
         </li>
-      } @empty {
+      }
+      @if (noteDropIndex() === noteService.notes().length) {
+        <li class="mx-3 my-px shrink-0 border-t-2 border-dashed border-vscode-accent-500" aria-hidden="true"></li>
+      }
+      @if (noteService.notes().length === 0) {
         <li class="px-4 py-4 text-center text-xs text-slate-400 dark:text-vscode-400">No notes yet</li>
       }
     </ul>
@@ -174,13 +200,12 @@
 
   <ul
     class="flex flex-1 flex-col overflow-y-auto py-2 [scrollbar-gutter:stable]"
-    (dragleave)="onDragLeave($event)"
     (dragover)="$event.preventDefault()"
     (drop)="onDrop($event, projectService.projects().length)"
   >
     @for (project of filteredProjects(); track project.id; let i = $index) {
       @if (dropIndex() === i) {
-        <li class="mx-3 my-px h-0.5 rounded-full bg-vscode-accent-500" aria-hidden="true"></li>
+        <li class="mx-3 my-px shrink-0 border-t-2 border-dashed border-vscode-accent-500" aria-hidden="true"></li>
       }
       <li
         class="flex cursor-pointer items-center gap-1.5 border-l-[3px] py-2.5 pl-2 pr-4 text-sm text-slate-600 transition-colors dark:text-vscode-200"

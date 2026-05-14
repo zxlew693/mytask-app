@@ -14,6 +14,7 @@ export const Channels = {
   NOTE_CREATE:         'note:create',
   NOTE_UPSERT:         'note:upsert',
   NOTE_DELETE:         'note:delete',
+  NOTE_RENAME:         'note:rename',
   SETTINGS_GET:        'settings:get',
   SETTINGS_SAVE:       'settings:save',
   WINDOW_CLOSE:        'window:close',

@@ -23,3 +23,8 @@ export interface UpsertNotePayload {
 export interface DeleteNotePayload {
   id: string;
 }
+
+export interface RenameNotePayload {
+  id: string;
+  title: string;
+}

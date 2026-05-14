@@ -252,6 +252,15 @@ export class DbService {
     return this.queryOne<NoteRow>('SELECT id, title, content, updatedAt FROM notes WHERE id = ?', [id])!;
   }
 
+  renameNote(id: string, title: string): NoteListItem {
+    const stmt = this.db.prepare('UPDATE notes SET title = ?, updatedAt = ? WHERE id = ?');
+    const updatedAt = new Date().toISOString();
+    stmt.run([title, updatedAt, id]);
+    stmt.free();
+    this.persist();
+    return { id, title, updatedAt };
+  }
+
   deleteNote(id: string): void {
     const stmt = this.db.prepare('DELETE FROM notes WHERE id = ?');
     stmt.run([id]);

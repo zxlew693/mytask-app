@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { Channels } from './channels';
-import type { CreateNotePayload, UpsertNotePayload, DeleteNotePayload } from './note.types';
+import type { CreateNotePayload, UpsertNotePayload, DeleteNotePayload, RenameNotePayload } from './note.types';
 import type { DbService } from '../store/db.service';
 
 export function registerNoteHandlers(db: DbService): void {
@@ -22,5 +22,9 @@ export function registerNoteHandlers(db: DbService): void {
 
   ipcMain.handle(Channels.NOTE_DELETE, (_event, payload: DeleteNotePayload) => {
     return db.deleteNote(payload.id);
+  });
+
+  ipcMain.handle(Channels.NOTE_RENAME, (_event, payload: RenameNotePayload) => {
+    return db.renameNote(payload.id, payload.title);
   });
 }
